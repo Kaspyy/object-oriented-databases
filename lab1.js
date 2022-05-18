@@ -45,15 +45,16 @@ db.klienci
   .sort({ nazwisko: 1 })
   .sort({ imie: -1 });
 
-// Wyświetl wszystkie informacje z kolekcji zakwaterowanie w kolejności od najbardziej do najmniej kosztownego o ile koszt istnieje.
+// Wyświetl wszystkie informacje z kolekcji zakwaterowanie, ktorych koszt istnieje i posortuj wyniki po koszcie malejąco.
 db.zakwaterowanie
-  .find({}, { _id: 1, dataZakwaterowania: 1, dataWykwaterowania: 1, koszt: 1 })
+  .find({}, { koszt: { $exists: true } }, { koszt: 1 })
   .sort({ koszt: -1 });
 
-// Wyświetl pokoje, które posiadają możliwość dodania jednej dostawki których cena dostawki za dobę jest większa od 50.
+// Wyświetl pokoje, które posiadają możliwość dodania jednej dostawki and których cena dostawki za dobę jest większa od 50.
 db.pokoje.find({
-  'cenaZaDostawke.liczbaDostawek': 1,
-  'cenaZaDostawke.cenaZaDobe': { $gt: 50 },
+  cenaZaDostawke: {
+    $elemMatch: { liczbaDostawek: 1, cenaZaDobe: { $gt: 50 } },
+  },
 });
 
 // Wyświetl numery pokoi które posiadają dostawki i koszt za dobę jest większy od 300 wyniki posortuj od najbardziej do najmniej kosztownego.
